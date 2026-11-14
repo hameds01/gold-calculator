@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جواهری شکریان | ماشین حساب طلافروشی</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 25px 15px;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f3f4f6;
+  color: #222;
+}
+.container {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 430px;
+  margin: auto;
+  padding: 22px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 5px 25px #00000010;
+}
+/* لوگوی کم‌رنگ در پس‌زمینه */
+.container::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: url("logo.PNG") ;
+  background-repeat: no-repeat;
+  background-position: center 57%;
+  background-size: 78%;
+  opacity: 0.055;
+  pointer-events: none;
+}
+.brand {
+  text-align: center;
+  margin: 0 0 7px;
+  color: #98712e;
+  font-size: 23px;
+  font-weight: bold;
+  letter-spacing: -1px;
+}
+.subtitle {
+  text-align: center;
+  margin: 0 0 24px;
+  color: #777;
+  font-size: 13px;
+}
+label {
+  display: block;
+  margin: 15px 0 7px;
+  font-size: 14px;
+}
+input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  font-size: 16px;
+  outline: none;
+  background: rgba(255,255,255,.9);
+}
+input:focus { border-color: #b18a45; }
+.result {
+  margin-top: 25px;
+  padding: 18px;
+  background: rgba(247,245,240,.91);
+  border-radius: 12px;
+}
+.item {
+  display: flex;
+  justify-content: space-between;
+  margin: 14px 0;
+  font-size: 14px;
+  gap: 10px;
+}
+.total {
+  border-top: 1px solid #ddd;
+  padding-top: 18px;
+  margin-top: 18px;
+  text-align: center;
+}
+.total strong {
+  display: block;
+  font-size: 25px;
+  color: #98712e;
+  margin-top: 12px;
+}
+button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 13px;
+  border: none;
+  border-radius: 9px;
+  background: #222;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="brand">جواهری شکریان</h1>
+  <p class="subtitle">ماشین حساب قیمت طلا</p>
+
+  <label for="weight">وزن طلا (گرم)</label>
+  <input id="weight" type="number" value="10" min="0" step="any">
+
+  <label for="price">قیمت هر گرم طلای ۱۸ عیار (تومان)</label>
+  <input id="price" type="number" value="10000000" min="0" step="any">
+
+  <label for="wage">اجرت ساخت (درصد)</label>
+  <input id="wage" type="number" value="15" min="0" step="any">
+
+  <label for="profit">سود فروشنده (درصد)</label>
+  <input id="profit" type="number" value="7" min="0" step="any">
+
+  <label for="tax">مالیات (درصد)</label>
+  <input id="tax" type="number" value="10" min="0" step="any">
+
+  <div class="result">
+    <div class="item"><span>قیمت طلای خام</span><b id="gold">0</b></div>
+    <div class="item"><span>اجرت ساخت</span><b id="wageAmount">0</b></div>
+    <div class="item"><span>سود فروشنده</span><b id="profitAmount">0</b></div>
+    <div class="item"><span>مالیات</span><b id="taxAmount">0</b></div>
+    <div class="total">
+      مبلغ نهایی قابل پرداخت
+      <strong id="total">0 تومان</strong>
+    </div>
+  </div>
+
+  <button type="button" onclick="resetForm()">بازگشت به مقادیر اولیه</button>
+</div>
+
+<script>
+const fields = ["weight", "price", "wage", "profit", "tax"];
+
+function format(num) {
+  return Math.round(num).toLocaleString("en-US");
+}
+
+function calculate() {
+  const get = id => Math.max(0, Number(document.getElementById(id).value) || 0);
+
+  const weight = get("weight");
+  const price = get("price");
+  const wage = get("wage");
+  const profit = get("profit");
+  const tax = get("tax");
+
+  const gold = weight * price;
+  const wageAmount = gold * wage / 100;
+  const profitAmount = (gold + wageAmount) * profit / 100;
+  const taxAmount = (wageAmount + profitAmount) * tax / 100;
+  const total = gold + wageAmount + profitAmount + taxAmount;
+
+  document.getElementById("gold").textContent = format(gold) + " تومان";
+  document.getElementById("wageAmount").textContent = format(wageAmount) + " تومان";
+  document.getElementById("profitAmount").textContent = format(profitAmount) + " تومان";
+  document.getElementById("taxAmount").textContent = format(taxAmount) + " تومان";
+  document.getElementById("total").textContent = format(total) + " تومان";
+}
+
+function resetForm() {
+  document.getElementById("weight").value = 10;
+  document.getElementById("price").value = 10000000;
+  document.getElementById("wage").value = 15;
+  document.getElementById("profit").value = 7;
+  document.getElementById("tax").value = 10;
+  calculate();
+}
+
+fields.forEach(id => {
+  document.getElementById(id).addEventListener("input", calculate);
+});
+calculate();
+</script>
+</body>
+</html>
